@@ -4,6 +4,8 @@ This package provides cgo bindings to Rust's regex engine.
 
 This is currently a work in progress.
 
+Dual-licensed under MIT or the [UNLICENSE](http://unlicense.org).
+
 
 ### Documentation
 
