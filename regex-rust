@@ -1,0 +1,47 @@
+PASS
+BenchmarkMatchEasy0_32               	10000000	       222 ns/op	 143.69 MB/s
+BenchmarkMatchEasy0_1K               	10000000	       222 ns/op	4605.20 MB/s
+BenchmarkMatchEasy0_32K              	10000000	       222 ns/op	147213.66 MB/s
+BenchmarkMatchEasy0_1M               	10000000	       222 ns/op	4719689.39 MB/s
+BenchmarkMatchEasy0_32M              	10000000	       213 ns/op	156878555.03 MB/s
+BenchmarkMatchEasy0i_32              	10000000	       228 ns/op	 139.75 MB/s
+BenchmarkMatchEasy0i_1K              	10000000	       228 ns/op	4475.04 MB/s
+BenchmarkMatchEasy0i_32K             	10000000	       228 ns/op	143235.97 MB/s
+BenchmarkMatchEasy0i_1M              	10000000	       228 ns/op	4582492.43 MB/s
+BenchmarkMatchEasy0i_32M             	10000000	       233 ns/op	143626597.90 MB/s
+BenchmarkMatchEasy1_32               	10000000	       229 ns/op	 139.49 MB/s
+BenchmarkMatchEasy1_1K               	10000000	       229 ns/op	4467.93 MB/s
+BenchmarkMatchEasy1_32K              	10000000	       229 ns/op	143010.92 MB/s
+BenchmarkMatchEasy1_1M               	10000000	       229 ns/op	4575198.42 MB/s
+BenchmarkMatchEasy1_32M              	10000000	       211 ns/op	158747658.13 MB/s
+BenchmarkMatchMedium_32              	 5000000	       242 ns/op	 132.01 MB/s
+BenchmarkMatchMedium_1K              	 5000000	       242 ns/op	4231.03 MB/s
+BenchmarkMatchMedium_32K             	 5000000	       242 ns/op	135348.39 MB/s
+BenchmarkMatchMedium_1M              	 5000000	       242 ns/op	4331561.73 MB/s
+BenchmarkMatchMedium_32M             	10000000	       214 ns/op	156575833.69 MB/s
+BenchmarkMatchHard_32                	10000000	       229 ns/op	 139.50 MB/s
+BenchmarkMatchHard_1K                	10000000	       229 ns/op	4466.01 MB/s
+BenchmarkMatchHard_32K               	10000000	       229 ns/op	142758.39 MB/s
+BenchmarkMatchHard_1M                	10000000	       229 ns/op	4574748.55 MB/s
+BenchmarkMatchHard_32M               	10000000	       214 ns/op	156417047.69 MB/s
+BenchmarkMatchHard1_32               	 5000000	       272 ns/op	 117.23 MB/s
+BenchmarkMatchHard1_1K               	 1000000	      2333 ns/op	 438.78 MB/s
+BenchmarkMatchHard1_32K              	   20000	     68659 ns/op	 477.25 MB/s
+BenchmarkMatchHard1_1M               	    1000	   2186555 ns/op	 479.56 MB/s
+BenchmarkMatchHard1_32M              	      20	  70463061 ns/op	 476.20 MB/s
+BenchmarkLiteral                     	10000000	       229 ns/op
+BenchmarkNotLiteral                  	 5000000	       328 ns/op
+BenchmarkMatchClass                  	 5000000	       295 ns/op
+BenchmarkMatchClass_InRange          	 5000000	       243 ns/op
+BenchmarkAnchoredLiteralShortNonMatch	10000000	       222 ns/op
+BenchmarkAnchoredLiteralLongNonMatch 	10000000	       223 ns/op
+BenchmarkAnchoredShortMatch          	10000000	       226 ns/op
+BenchmarkAnchoredLongMatch           	10000000	       226 ns/op
+BenchmarkOnePassShortA               	 5000000	       255 ns/op
+BenchmarkNotOnePassShortA            	 5000000	       254 ns/op
+BenchmarkOnePassShortB               	 5000000	       256 ns/op
+BenchmarkNotOnePassShortB            	 5000000	       255 ns/op
+BenchmarkOnePassLongPrefix           	 5000000	       272 ns/op
+BenchmarkOnePassLongNotPrefix        	 5000000	       272 ns/op
+BenchmarkMatchParallelShared         	 5000000	       279 ns/op
+ok  	github.com/BurntSushi/rure-go	97.035s
