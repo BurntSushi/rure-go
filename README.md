@@ -217,3 +217,24 @@ Some possible explanations for the performance difference:
 
 There's probably more, but my experience suggests the above are the most
 significant.
+
+
+### Bugs
+
+Rust's regex engine uses the equivalent of C's `size_t` type to represent match
+offsets into a haystack. This FFI wrapper converts such offsets to Go's `int`
+type, which is not guaranteed to have the same size as a `size_t`, and of
+course, `int` is signed while `size_t` is not.
+
+It's not clear what the right answer is here. Today, the conversions are
+unchecked, which means that callers will get wrong answers if the size of the
+haystack exceeds the size of Go's `int` type.
+
+Possible solutions:
+
+1. All conversions from `C.size_t` to `int` are checked, and the program panics
+   if the `C.size_t` cannot fit into an `int`.
+2. If the haystack length exceeds the maximum positive value representable by
+   `int`, then the program panics.
+
+I'm leaning towards (2).
