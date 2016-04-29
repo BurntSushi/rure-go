@@ -2,8 +2,6 @@ Go bindings to RUst's REgex engine
 ==================================
 This package provides cgo bindings to Rust's regex engine.
 
-This is currently a work in progress.
-
 Dual-licensed under MIT or the [UNLICENSE](http://unlicense.org).
 
 
@@ -65,6 +63,25 @@ func ExampleRegex() {
 	// x
 }
 ```
+
+
+### Motivation
+
+I wrote these bindings primarily as a test case for the
+[C API of Rust's regex
+library](https://github.com/rust-lang-nursery/regex/tree/master/regex-capi).
+In particular, I wanted to be sure that it was feasible to write low overhead
+bindings to another language. For the most part, I think that was a success.
+
+Secondarily, Rust's regex engine is pretty fast and also provides the same
+algorithmic guarantees that Go's regex engine provides. Therefore, it may prove
+useful as an alternative under some limited circumstances. First, you must be
+willing to tolerate cgo. Second, because of cgo function call overhead, your
+haystacks probably need to be a bit bigger to realize big performance wins. For
+example, if your use case is matching a regex a lot on very small strings, then
+cgo will probably prevent you from doing it faster with `rure`. (You could,
+however, write your matching loop as a C helper function, but now we're just
+digging ourselves in deeper.)
 
 
 ### Benchmarks
