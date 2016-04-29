@@ -11,6 +11,10 @@ Dual-licensed under MIT or the [UNLICENSE](http://unlicense.org).
 
 [godoc.org/github.com/BurntSushi/rure-go](http://godoc.org/github.com/BurntSushi/rure-go)
 
+The primary documentation for the Rust library, including a definition of the
+syntax, can be found here:
+http://doc.rust-lang.org/regex/regex/index.html
+
 
 ### Install
 
