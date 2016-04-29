@@ -326,14 +326,3 @@ func noCopyBytes(s string) []byte {
 	}
 	return *(*[]byte)(unsafe.Pointer(&bh))
 }
-
-// Copies a Go byte slice into C allocated memory.
-//
-// The caller is responsible for freeing the memory returned.
-func cbytes(b []byte) unsafe.Pointer {
-	// take from go:src/cmd/cgo/out.go
-	p := C.malloc(C.size_t(len(b)))
-	pp := (*[1 << 30]byte)(p)
-	copy(pp[:], b)
-	return p
-}
