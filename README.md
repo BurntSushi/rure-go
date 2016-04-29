@@ -155,8 +155,9 @@ BenchmarkIngSuffixLimitedSpace          6.96         437.96       62.93x
 ```
 
 The principal reason for the performance difference is that Rust's regex engine
-(like RE2) has a lazy DFA. Work is ongoing to add a lazy DFA to Go's `regexp`
-package.
+(like RE2) has a lazy DFA.
+[There is ongoing work](https://github.com/golang/go/issues/11646)
+to add a lazy DFA to Go's `regexp` package.
 
 For fun, and since Rust's regex engine, RE2 (in C++) and Go's regexp library
 are very much related and share many of the same implementation details,
