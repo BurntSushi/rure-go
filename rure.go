@@ -170,7 +170,11 @@ func (re *Regex) FindAllBytes(text []byte) []int {
 	len := C.size_t(len(text))
 	nmatches := C.size_t(0)
 	matches := (*C.size_t)(nil)
-	defer C.free(unsafe.Pointer(matches))
+	defer func() {
+		if matches != nil {
+			C.free(unsafe.Pointer(matches))
+		}
+	}()
 
 	C.rure_iter_collect(it, haystack, len, &matches, &nmatches)
 	if nmatches == 0 {
