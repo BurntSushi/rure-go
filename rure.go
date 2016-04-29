@@ -180,11 +180,17 @@ func (re *Regex) FindAllBytes(text []byte) []int {
 	if nmatches == 0 {
 		return nil
 	}
+
+	// Copy the matches from C memory to Go memory.
 	matchesInts := make([]int, 2*nmatches)
-	matchesArr := (*[1 << 30]C.size_t)(unsafe.Pointer(matches))
-	for i := 0; i < int(nmatches); i++ {
-		matchesInts[i*2] = int(matchesArr[i*2])
-		matchesInts[i*2+1] = int(matchesArr[i*2+1])
+	p := uintptr(unsafe.Pointer(matches))
+	stride := unsafe.Sizeof(C.size_t(0))
+	for i := uintptr(0); i < uintptr(nmatches); i++ {
+		base := i * 2
+		start := unsafe.Pointer(p + (base * stride))
+		end := unsafe.Pointer(p + ((base + 1) * stride))
+		matchesInts[base] = int(*(*C.size_t)(start))
+		matchesInts[base+1] = int(*(*C.size_t)(end))
 	}
 	return matchesInts
 }
