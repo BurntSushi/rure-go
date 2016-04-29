@@ -12,6 +12,57 @@ Dual-licensed under MIT or the [UNLICENSE](http://unlicense.org).
 [godoc.org/github.com/BurntSushi/rure-go](http://godoc.org/github.com/BurntSushi/rure-go)
 
 
+### Install
+
+You'll need to [install Rust](https://www.rust-lang.org/downloads.html) and
+have a Go compiler handy. To run tests for `rure-go`, we'll need to compile
+Rust's regex library and then tell the Go compiler where to find it. These
+commands should do it:
+
+```
+$ git clone git://github.com/rust-lang-nursery/regex
+$ cargo build --release --manifest-path ./regex/regex-capi/Cargo.toml
+$ export CGO_LDFLAGS="-L$(pwd)/regex/regex-capi/target/release"
+$ export LD_LIBRARY_PATH="$(pwd)/regex/regex-capi/target/release"
+$ go get -t github.com/BurntSushi/rure-go
+$ go test github.com/BurntSushi/rure-go
+```
+
+And to run benchmarks:
+
+```
+$ go test github.com/BurntSushi/rure-go/bench/rust -cpu 1 -run / -bench .
+```
+
+Replace `rust` with `go` in the package path to run the same set of benchmarks
+using Go's `regexp` package.
+
+
+### Example usage
+
+This shows how to compile a regex, iterate over successive matches and extract
+a capturing group using its name:
+
+```
+func ExampleRegex() {
+	re := MustCompile(`\w+(?P<last>\w)`)
+	haystack := "foo bar baz quux"
+	it := re.Iter(haystack)
+	caps := re.NewCaptures()
+	for it.Next(caps) {
+		// Print the last letter of each word matched.
+		start, end, _ := caps.GroupName("last")
+		fmt.Println(haystack[start:end])
+	}
+	// Output:
+	// o
+	// r
+	// z
+	// x
+}
+```
+
+
 ### Benchmarks
 
 These are the benchmarks as they are defined in Go's `regexp` package. Two
