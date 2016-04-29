@@ -1,7 +1,6 @@
 package rure
 
 // #cgo LDFLAGS: -lrure
-// #include <stdio.h>
 // #include "rure.h"
 //
 // /*
