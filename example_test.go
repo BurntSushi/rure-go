@@ -5,7 +5,7 @@ import "fmt"
 // ExampleRegex shows how to compile a Regex, iterate over successive matches
 // and extract a capturing group using its name.
 func ExampleRegex() {
-	re := MustCompile(`\w+(?P<last>\w)`)
+	re := MustCompile(`\w*(?P<last>\w)`)
 	haystack := "foo bar baz quux"
 	it := re.Iter(haystack)
 	caps := re.NewCaptures()
