@@ -22,9 +22,12 @@ important comments:
 2. Several of the benchmarks are dramatically distorted because of
    optimizations in Rust's regex engine. In fact, none of these benchmarks give
    an accurate depiction of Rust's regex engine overall speed. For example,
-   the Hard1 benchmark doesn't even use the regex engine at all. The other
-   {easy,medium,hard} benchmarks run the regex engine in reverse from the end
-   of the string since the regexes are anchored at the end.
+   the Hard1 benchmark doesn't even use the regex engine at all, because Rust's
+   library will detect it as a pure alternation of literals and fall back to
+   Aho-Corasick. The other {easy,medium,hard} benchmarks run the regex engine
+   in reverse from the end of the string since the regexes are anchored at the
+   end. As a result, the time it takes to execute the search doesn't vary with
+   the length of the haystack.
 
 ```
 $ benchcmp ~/clones/go/src/regexp/regex-go ./regex-rust
@@ -229,12 +232,3 @@ course, `int` is signed while `size_t` is not.
 It's not clear what the right answer is here. Today, the conversions are
 unchecked, which means that callers will get wrong answers if the size of the
 haystack exceeds the size of Go's `int` type.
-
-Possible solutions:
-
-1. All conversions from `C.size_t` to `int` are checked, and the program panics
-   if the `C.size_t` cannot fit into an `int`.
-2. If the haystack length exceeds the maximum positive value representable by
-   `int`, then the program panics.
-
-I'm leaning towards (2).
