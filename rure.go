@@ -4,6 +4,14 @@ package rure
 // #include <stdio.h>
 // #include "rure.h"
 //
+// /*
+//  * rure_iter_collect exhausts the given iterator over the given haystack,
+//  * and reports all successively non-overlapping match locations in *matches.
+//  * *num_matches is set to the number of matches found.
+//  *
+//  * *matches contains `*num_matches * 2` offsets, where `2 * i` and
+//  * `2 * i + 1` represent the start and end byte offsets of match `i`.
+//  */
 // void rure_iter_collect(rure_iter *it,
 //                        const uint8_t *haystack, size_t length,
 //                        size_t **matches, size_t *num_matches)
@@ -13,12 +21,12 @@ package rure
 //     size_t cap = 64;
 //     *matches = (size_t *)malloc(cap * sizeof(size_t));
 //     while (rure_iter_next(it, haystack, length, &m)) {
-//	       if ((len * 2 + 1) >= cap) {
-//	           cap *= 2;
-//		       *matches = (size_t *)realloc(*matches, cap * sizeof(size_t));
-//		   }
-//		   (*matches)[len * 2 + 0] = m.start;
-//		   (*matches)[len * 2 + 1] = m.end;
+//         if ((len * 2 + 1) >= cap) {
+//             cap *= 2;
+//             *matches = (size_t *)realloc(*matches, cap * sizeof(size_t));
+//         }
+//         (*matches)[len * 2 + 0] = m.start;
+//         (*matches)[len * 2 + 1] = m.end;
 //         len++;
 //     }
 //     *num_matches = len;
