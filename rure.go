@@ -5,8 +5,8 @@ package rure
 // #include "rure.h"
 //
 // void rure_iter_collect(rure_iter *it,
-//						  const uint8_t *haystack, size_t length,
-//						  size_t **matches, size_t *num_matches)
+//                        const uint8_t *haystack, size_t length,
+//                        size_t **matches, size_t *num_matches)
 // {
 //     rure_match m = {0};
 //     size_t len = 0;
