@@ -1,14 +1,16 @@
-package rure
+package rure_bench_rust
 
 import (
 	"strings"
 	"testing"
+
+	"github.com/BurntSushi/rure-go"
 )
 
 func BenchmarkLiteral(b *testing.B) {
 	x := strings.Repeat("x", 50) + "y"
 	b.StopTimer()
-	re := MustCompile("y")
+	re := rure.MustCompile("y")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		if !re.IsMatch(x) {
@@ -20,7 +22,7 @@ func BenchmarkLiteral(b *testing.B) {
 func BenchmarkNotLiteral(b *testing.B) {
 	x := strings.Repeat("x", 50) + "y"
 	b.StopTimer()
-	re := MustCompile(".y")
+	re := rure.MustCompile(".y")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		if !re.IsMatch(x) {
@@ -32,7 +34,7 @@ func BenchmarkNotLiteral(b *testing.B) {
 func BenchmarkMatchClass(b *testing.B) {
 	b.StopTimer()
 	x := strings.Repeat("xxxx", 20) + "w"
-	re := MustCompile("[abcdw]")
+	re := rure.MustCompile("[abcdw]")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		if !re.IsMatch(x) {
@@ -46,7 +48,7 @@ func BenchmarkMatchClass_InRange(b *testing.B) {
 	// 'b' is between 'a' and 'c', so the charclass
 	// range checking is no help here.
 	x := strings.Repeat("bbbb", 20) + "c"
-	re := MustCompile("[ac]")
+	re := rure.MustCompile("[ac]")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		if !re.IsMatch(x) {
@@ -58,7 +60,7 @@ func BenchmarkMatchClass_InRange(b *testing.B) {
 func BenchmarkAnchoredLiteralShortNonMatch(b *testing.B) {
 	b.StopTimer()
 	x := []byte("abcdefghijklmnopqrstuvwxyz")
-	re := MustCompile("^zbc(d|e)")
+	re := rure.MustCompile("^zbc(d|e)")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		re.IsMatchBytes(x)
@@ -71,7 +73,7 @@ func BenchmarkAnchoredLiteralLongNonMatch(b *testing.B) {
 	for i := 0; i < 15; i++ {
 		x = append(x, x...)
 	}
-	re := MustCompile("^zbc(d|e)")
+	re := rure.MustCompile("^zbc(d|e)")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		re.IsMatchBytes(x)
@@ -81,7 +83,7 @@ func BenchmarkAnchoredLiteralLongNonMatch(b *testing.B) {
 func BenchmarkAnchoredShortMatch(b *testing.B) {
 	b.StopTimer()
 	x := []byte("abcdefghijklmnopqrstuvwxyz")
-	re := MustCompile("^.bc(d|e)")
+	re := rure.MustCompile("^.bc(d|e)")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		re.IsMatchBytes(x)
@@ -94,7 +96,7 @@ func BenchmarkAnchoredLongMatch(b *testing.B) {
 	for i := 0; i < 15; i++ {
 		x = append(x, x...)
 	}
-	re := MustCompile("^.bc(d|e)")
+	re := rure.MustCompile("^.bc(d|e)")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		re.IsMatchBytes(x)
@@ -104,7 +106,7 @@ func BenchmarkAnchoredLongMatch(b *testing.B) {
 func BenchmarkOnePassShortA(b *testing.B) {
 	b.StopTimer()
 	x := []byte("abcddddddeeeededd")
-	re := MustCompile("^.bc(d|e)*$")
+	re := rure.MustCompile("^.bc(d|e)*$")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		re.IsMatchBytes(x)
@@ -114,7 +116,7 @@ func BenchmarkOnePassShortA(b *testing.B) {
 func BenchmarkNotOnePassShortA(b *testing.B) {
 	b.StopTimer()
 	x := []byte("abcddddddeeeededd")
-	re := MustCompile(".bc(d|e)*$")
+	re := rure.MustCompile(".bc(d|e)*$")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		re.IsMatchBytes(x)
@@ -124,7 +126,7 @@ func BenchmarkNotOnePassShortA(b *testing.B) {
 func BenchmarkOnePassShortB(b *testing.B) {
 	b.StopTimer()
 	x := []byte("abcddddddeeeededd")
-	re := MustCompile("^.bc(?:d|e)*$")
+	re := rure.MustCompile("^.bc(?:d|e)*$")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		re.IsMatchBytes(x)
@@ -134,7 +136,7 @@ func BenchmarkOnePassShortB(b *testing.B) {
 func BenchmarkNotOnePassShortB(b *testing.B) {
 	b.StopTimer()
 	x := []byte("abcddddddeeeededd")
-	re := MustCompile(".bc(?:d|e)*$")
+	re := rure.MustCompile(".bc(?:d|e)*$")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		re.IsMatchBytes(x)
@@ -144,7 +146,7 @@ func BenchmarkNotOnePassShortB(b *testing.B) {
 func BenchmarkOnePassLongPrefix(b *testing.B) {
 	b.StopTimer()
 	x := []byte("abcdefghijklmnopqrstuvwxyz")
-	re := MustCompile("^abcdefghijklmnopqrstuvwxyz.*$")
+	re := rure.MustCompile("^abcdefghijklmnopqrstuvwxyz.*$")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		re.IsMatchBytes(x)
@@ -154,7 +156,7 @@ func BenchmarkOnePassLongPrefix(b *testing.B) {
 func BenchmarkOnePassLongNotPrefix(b *testing.B) {
 	b.StopTimer()
 	x := []byte("abcdefghijklmnopqrstuvwxyz")
-	re := MustCompile("^.bcdefghijklmnopqrstuvwxyz.*$")
+	re := rure.MustCompile("^.bcdefghijklmnopqrstuvwxyz.*$")
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		re.IsMatchBytes(x)
@@ -163,7 +165,7 @@ func BenchmarkOnePassLongNotPrefix(b *testing.B) {
 
 func BenchmarkMatchParallelShared(b *testing.B) {
 	x := []byte("this is a long line that contains foo bar baz")
-	re := MustCompile("foo (ba+r)? baz")
+	re := rure.MustCompile("foo (ba+r)? baz")
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -196,7 +198,7 @@ func makeText(n int) []byte {
 }
 
 func benchmark(b *testing.B, re string, n int) {
-	r := MustCompile(re)
+	r := rure.MustCompile(re)
 	t := makeText(n)
 	b.ResetTimer()
 	b.SetBytes(int64(n))

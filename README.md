@@ -20,12 +20,11 @@ important comments:
 1. Rust's regex engine hits a performance ceiling because of cgo function call
    overhead. As a result, Go is faster on some benchmarks.
 2. Several of the benchmarks are dramatically distorted because of
-   optimizations in Rust's regex engine. The benchmarks need to be fine tuned
-   to give a more accurate picture. (In fact, none of the benchmarks give an
-   accurate depiction of Rust's regex engine overall speed. For example, the
-   Hard1 benchmark doesn't even use the regex engine at all. The other
+   optimizations in Rust's regex engine. In fact, none of these benchmarks give
+   an accurate depiction of Rust's regex engine overall speed. For example,
+   the Hard1 benchmark doesn't even use the regex engine at all. The other
    {easy,medium,hard} benchmarks run the regex engine in reverse from the end
-   of the string since the regexes are anchored at the end.)
+   of the string since the regexes are anchored at the end.
 
 ```
 $ benchcmp ~/clones/go/src/regexp/regex-go ./regex-rust
@@ -108,3 +107,108 @@ BenchmarkMatchHard1_32K      2.00         477.25           238.62x
 BenchmarkMatchHard1_1M       2.00         479.56           239.78x
 BenchmarkMatchHard1_32M      2.01         476.20           236.92x
 ```
+
+Here are the benchmarks ported from Rust's regex library. These benchmarks do a
+better job of characterizing the performance difference. In particular, they
+use `FindAll()`, which iterates over successive matches in C to avoid cgo
+function call overhead.
+
+```
+benchmark                               old MB/s     new MB/s     speedup
+BenchmarkSherlock                       3805.25      7861.29      2.07x
+BenchmarkHolmes                         1339.82      9515.28      7.10x
+BenchmarkSherlockHolmes                 2900.11      14011.42     4.83x
+BenchmarkSherlockNoCase                 9.76         509.87       52.24x
+BenchmarkHolmesNoCase                   10.66        534.47       50.14x
+BenchmarkSherlockHolmesNoCase           9.84         516.71       52.51x
+BenchmarkNameWhitespace                 2591.41      6870.12      2.65x
+BenchmarkNameAlt1                       1556.22      12787.94     8.22x
+BenchmarkNameAlt2                       10.20        2789.56      273.49x
+BenchmarkNameAlt3                       2.93         485.43       165.68x
+BenchmarkNameAlt3NoCase                 1.56         429.32       275.21x
+BenchmarkNameAlt4                       10.17        2311.07      227.24x
+BenchmarkNameAlt4NoCase                 5.31         434.40       81.81x
+BenchmarkNameAlt5                       7.08         1735.48      245.12x
+BenchmarkNameAlt5NoCase                 3.55         443.53       124.94x
+BenchmarkNoMatchUncommon                15335.81     21447.14     1.40x
+BenchmarkNoMatchCommon                  487.44       21294.92     43.69x
+BenchmarkNoMatchReallyCommon            468.76       1622.89      3.46x
+BenchmarkTheLower                       100.82       755.81       7.50x
+BenchmarkTheUpper                       1219.33      8116.70      6.66x
+BenchmarkTheNoCase                      9.68         324.15       33.49x
+BenchmarkTheWhitespace                  59.02        442.80       7.50x
+BenchmarkEverythingGreedy               8.86         179.60       20.27x
+BenchmarkEverythingGreedyNL             10.75        472.34       43.94x
+BenchmarkLetters                        1.72         15.70        9.13x
+BenchmarkLettersUpper                   13.99        247.74       17.71x
+BenchmarkLettersLower                   1.64         16.43        10.02x
+BenchmarkWords                          4.19         48.45        11.56x
+BenchmarkBeforeHolmes                   8.58         517.72       60.34x
+BenchmarkHolmesCocharWatson             10.73        2634.69      245.54x
+BenchmarkHolmesCowordWatson             2.15         883.32       410.85x
+BenchmarkQuotes                         12.49        1002.75      80.28x
+BenchmarkLineBoundarySherlockHolmes     12.98        534.98       41.22x
+BenchmarkWordEndingN                    8.82         288.50       32.71x
+BenchmarkRepeatedClassNegation          4.68         1.09         0.23x
+BenchmarkIngSuffix                      10.77        413.77       38.42x
+BenchmarkIngSuffixLimitedSpace          6.96         437.96       62.93x
+```
+
+For fun, and since Rust's regex engine, RE2 (in C++) and Go's regexp library
+are very much related and share many of the same implementation details,
+here's a comparison between Rust's regex engine and RE2 using Rust's benchmark
+harness:
+
+```
+name                                     re2 ns/iter           rust ns/iter            diff ns/iter   diff %
+sherlock::before_holmes                  1,443,662 (412 MB/s)  1,142,847 (520 MB/s)        -300,815  -20.84%
+sherlock::everything_greedy              9,310,589 (63 MB/s)   2,516,121 (236 MB/s)      -6,794,468  -72.98%
+sherlock::everything_greedy_nl           2,491,676 (238 MB/s)  1,204,517 (493 MB/s)      -1,287,159  -51.66%
+sherlock::holmes_cochar_watson           1,175,610 (506 MB/s)  222,959 (2,668 MB/s)        -952,651  -81.03%
+sherlock::holmes_coword_watson           1,347,865 (441 MB/s)  638,450 (931 MB/s)          -709,415  -52.63%
+sherlock::ing_suffix                     3,028,970 (196 MB/s)  1,361,756 (436 MB/s)      -1,667,214  -55.04%
+sherlock::ing_suffix_limited_space       1,957,296 (303 MB/s)  1,302,217 (456 MB/s)        -655,079  -33.47%
+sherlock::letters                        111,006,069 (5 MB/s)  25,340,930 (23 MB/s)     -85,665,139  -77.17%
+sherlock::letters_lower                  107,183,616 (5 MB/s)  24,525,566 (24 MB/s)     -82,658,050  -77.12%
+sherlock::letters_upper                  4,709,166 (126 MB/s)  2,082,277 (285 MB/s)      -2,626,889  -55.78%
+sherlock::line_boundary_sherlock_holmes  2,552,194 (233 MB/s)  1,114,865 (533 MB/s)      -1,437,329  -56.32%
+sherlock::name_alt1                      77,602 (7,666 MB/s)   37,361 (15,923 MB/s)         -40,241  -51.86%
+sherlock::name_alt2                      1,320,543 (450 MB/s)  191,247 (3,110 MB/s)      -1,129,296  -85.52%
+sherlock::name_alt3                      1,439,985 (413 MB/s)  1,280,912 (464 MB/s)        -159,073  -11.05%
+sherlock::name_alt3_nocase               2,756,402 (215 MB/s)  1,339,666 (444 MB/s)      -1,416,736  -51.40%
+sherlock::name_alt4                      1,362,748 (436 MB/s)  231,035 (2,575 MB/s)      -1,131,713  -83.05%
+sherlock::name_alt4_nocase               2,025,273 (293 MB/s)  1,313,315 (453 MB/s)        -711,958  -35.15%
+sherlock::name_alt5                      1,347,991 (441 MB/s)  322,420 (1,845 MB/s)      -1,025,571  -76.08%
+sherlock::name_alt5_nocase               2,115,018 (281 MB/s)  1,314,237 (452 MB/s)        -800,781  -37.86%
+sherlock::name_holmes                    166,170 (3,580 MB/s)  47,617 (12,494 MB/s)        -118,553  -71.34%
+sherlock::name_holmes_nocase             1,647,206 (361 MB/s)  1,114,830 (533 MB/s)        -532,376  -32.32%
+sherlock::name_sherlock                  58,758 (10,125 MB/s)  69,917 (8,509 MB/s)           11,159   18.99%
+sherlock::name_sherlock_holmes           60,607 (9,816 MB/s)   36,615 (16,248 MB/s)         -23,992  -39.59%
+sherlock::name_sherlock_holmes_nocase    1,540,731 (386 MB/s)  1,160,475 (512 MB/s)        -380,256  -24.68%
+sherlock::name_sherlock_nocase           1,536,512 (387 MB/s)  1,161,208 (512 MB/s)        -375,304  -24.43%
+sherlock::name_whitespace                62,172 (9,569 MB/s)   78,795 (7,550 MB/s)           16,623   26.74%
+sherlock::no_match_common                440,514 (1,350 MB/s)  25,933 (22,941 MB/s)        -414,581  -94.11%
+sherlock::no_match_really_common         440,342 (1,351 MB/s)  363,675 (1,635 MB/s)         -76,667  -17.41%
+sherlock::no_match_uncommon              23,726 (25,075 MB/s)  25,809 (23,051 MB/s)           2,083    8.78%
+sherlock::quotes                         1,393,911 (426 MB/s)  557,791 (1,066 MB/s)        -836,120  -59.98%
+sherlock::the_lower                      2,504,957 (237 MB/s)  620,410 (958 MB/s)        -1,884,547  -75.23%
+sherlock::the_nocase                     3,695,971 (160 MB/s)  1,681,153 (353 MB/s)      -2,014,818  -54.51%
+sherlock::the_upper                      232,581 (2,557 MB/s)  50,412 (11,801 MB/s)        -182,169  -78.32%
+sherlock::the_whitespace                 2,279,605 (260 MB/s)  1,121,804 (530 MB/s)      -1,157,801  -50.79%
+sherlock::word_ending_n                  3,330,263 (178 MB/s)  2,015,397 (295 MB/s)      -1,314,866  -39.48%
+sherlock::words                          30,546,351 (19 MB/s)  9,588,968 (62 MB/s)      -20,957,383  -68.61%
+```
+
+Some possible explanations for the performance difference:
+
+1. Rust's regex engine does quite a bit better with prefix literal detection.
+   Instead of limiting itself to just a single byte (like RE2), it will expand
+   alternates and character classes (within some limit) to come up with
+   literals. It will then use `memchr`, Boyer-Moore or Aho-Corasick before
+   diving into the regex engine.
+2. Rust's inner DFA loop is explicitly unrolled a few times, which decreases
+   the number of instructions it has to execute. (RE2's DFA loop is not
+   unrolled.)
+
+There's probably more, but my experience suggests the above are the most
+significant.

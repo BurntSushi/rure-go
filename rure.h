@@ -269,14 +269,12 @@ int32_t rure_capture_name_index(rure *re, const char *name);
 /*
  * rure_iter_new creates a new iterator.
  *
- * An iterator will report all successive non-overlapping matches of re in
- * haystack.
- *
- * haystack may contain arbitrary bytes, but ASCII compatible text is more
- * useful. UTF-8 is even more useful. Other text encodings aren't supported.
- * length should be the number of bytes in haystack.
+ * An iterator will report all successive non-overlapping matches of re.
+ * When calling iterator functions, the same haystack and length must be
+ * supplied to all invocations. (Strict pointer equality is, however, not
+ * required.)
  */
-rure_iter *rure_iter_new(rure *re, const uint8_t *haystack, size_t length);
+rure_iter *rure_iter_new(rure *re);
 
 /*
  * rure_iter_free frees the iterator given.
@@ -292,13 +290,19 @@ void rure_iter_free(rure_iter *it);
  *
  * If no match is found, then subsequent calls will return false indefinitely.
  *
+ * haystack may contain arbitrary bytes, but ASCII compatible text is more
+ * useful. UTF-8 is even more useful. Other text encodings aren't supported.
+ * length should be the number of bytes in haystack. The given haystack must
+ * be logically equivalent to all other haystacks given to this iterator.
+ *
  * rure_iter_next should be preferred to rure_iter_next_captures since it may
  * be faster.
  *
  * N.B. The performance of this search is not impacted by the presence of
  * capturing groups in your regular expression.
  */
-bool rure_iter_next(rure_iter *it, rure_match *match);
+bool rure_iter_next(rure_iter *it, const uint8_t *haystack, size_t length,
+                    rure_match *match);
 
 /*
  * rure_iter_next advances the iterator and returns true if and only if a
@@ -306,6 +310,11 @@ bool rure_iter_next(rure_iter *it, rure_match *match);
  * stored in the captures pointer given.
  *
  * If no match is found, then subsequent calls will return false indefinitely.
+ *
+ * haystack may contain arbitrary bytes, but ASCII compatible text is more
+ * useful. UTF-8 is even more useful. Other text encodings aren't supported.
+ * length should be the number of bytes in haystack. The given haystack must
+ * be logically equivalent to all other haystacks given to this iterator.
  *
  * Only use this function if you specifically need access to capture locations.
  * It is not necessary to use this function just because your regular
@@ -317,7 +326,9 @@ bool rure_iter_next(rure_iter *it, rure_match *match);
  * capturing groups. If you're using this function, it may be beneficial to
  * use non-capturing groups (e.g., `(?:re)`) where possible.
  */
-bool rure_iter_next_captures(rure_iter *it, rure_captures *captures);
+bool rure_iter_next_captures(rure_iter *it,
+                             const uint8_t *haystack, size_t length,
+                             rure_captures *captures);
 
 /*
  * rure_captures_new allocates storage for all capturing groups in re.
