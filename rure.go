@@ -1,4 +1,3 @@
-// Package rure contains Go bindings to Rust's regex library.
 package rure
 
 // #cgo LDFLAGS: -lrure

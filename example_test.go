@@ -20,3 +20,11 @@ func ExampleRegex() {
 	// z
 	// x
 }
+
+// ExampleFindBytes shows how to match bytes that aren't UTF-8.
+func ExampleRegex_FindBytes() {
+	re := MustCompile(`(?-u)\xFF`)
+	fmt.Println(re.FindBytes([]byte{0xFF}))
+	// Output:
+	// 0 1 true
+}
