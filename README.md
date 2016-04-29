@@ -108,10 +108,10 @@ BenchmarkMatchHard1_1M       2.00         479.56           239.78x
 BenchmarkMatchHard1_32M      2.01         476.20           236.92x
 ```
 
-Here are the benchmarks ported from Rust's regex library. These benchmarks do a
-better job of characterizing the performance difference. In particular, they
-use `FindAll()`, which iterates over successive matches in C to avoid cgo
-function call overhead.
+Here are the benchmarks ported from Rust's regex library. These benchmarks do
+a better job of characterizing the performance difference. In particular, they
+use `FindAll()` on a single `0.5MB` haystack, which iterates over successive
+matches in C to avoid cgo function call overhead.
 
 ```
 benchmark                               old MB/s     new MB/s     speedup
