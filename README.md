@@ -16,10 +16,11 @@ http://doc.rust-lang.org/regex/regex/index.html
 
 ### Install
 
-You'll need to [install Rust](https://www.rust-lang.org/downloads.html) and
-have a Go compiler handy. To run tests for `rure-go`, we'll need to compile
-Rust's regex library and then tell the Go compiler where to find it. These
-commands should do it:
+You'll need to [install Rust](https://www.rust-lang.org/downloads.html) (you'll
+need at least Rust 1.9, which is the current beta release) and have a Go
+compiler handy. To run tests for `rure-go`, we'll need to compile Rust's regex
+library and then tell the Go compiler where to find it. These commands should
+do it:
 
 ```
 $ git clone git://github.com/rust-lang-nursery/regex
