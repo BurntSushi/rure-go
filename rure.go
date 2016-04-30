@@ -74,8 +74,6 @@ const (
 )
 
 // Regex is a compiled regular expression.
-//
-// It is safe to use from multiple goroutines simultaneously.
 type Regex struct {
 	pattern string
 	p       *C.rure
@@ -390,7 +388,7 @@ func (opts *Options) SetSizeLimit(limit int) {
 
 // SetDFASizeLimit sets the approximate size limit (in bytes) of the DFA's
 // cache size. It is a per-thread limit, so that a Regex used in multiple
-// goroutines simultaneously may use up to this many bytes per-thread of usage.
+// threads simultaneously may use up to this many bytes per-thread of usage.
 //
 // 0 is a legal value.
 func (opts *Options) SetDFASizeLimit(limit int) {
