@@ -83,3 +83,10 @@ func TestFindAll(t *testing.T) {
 	matches := re.FindAll("abc xyz")
 	assert.Equal(t, []int{0, 3, 4, 7}, matches)
 }
+
+func TestAt(t *testing.T) {
+	re := MustCompile(`\bbar`)
+	haystack := "foobar"
+	assert.True(t, re.IsMatch(haystack[3:]))
+	assert.False(t, re.IsMatchAt(haystack, 3))
+}

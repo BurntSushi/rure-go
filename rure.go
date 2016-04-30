@@ -170,7 +170,7 @@ func CompileOptions(
 	}
 	err := newError()
 	re.p = C.rure_compile(
-		(*C.uint8_t)(&noCopyBytes(pattern)[0]),
+		asUint8Ptr(noCopyBytes(pattern)),
 		C.size_t(len(pattern)),
 		FlagDefault,
 		optp,
@@ -188,13 +188,23 @@ func (re *Regex) String() string {
 
 // IsMatch returns true if text matches re.
 func (re *Regex) IsMatch(text string) bool {
-	return re.IsMatchBytes(noCopyBytes(text))
+	return re.IsMatchBytesAt(noCopyBytes(text), 0)
 }
 
 // IsMatchBytes returns true if text matches re.
 func (re *Regex) IsMatchBytes(text []byte) bool {
+	return re.IsMatchBytesAt(text, 0)
+}
+
+// IsMatchAt returns true if text matches re starting at index i.
+func (re *Regex) IsMatchAt(text string, i int) bool {
+	return re.IsMatchBytesAt(noCopyBytes(text), i)
+}
+
+// IsMatchBytesAt returns true if text matches re starting at index i.
+func (re *Regex) IsMatchBytesAt(text []byte, i int) bool {
 	return bool(C.rure_is_match(
-		re.p, (*C.uint8_t)(&text[0]), C.size_t(len(text)), 0))
+		re.p, asUint8Ptr(text), C.size_t(len(text)), C.size_t(i)))
 }
 
 // ShortestMatch returns the end location of a match in text if it exists. This
@@ -220,7 +230,7 @@ func (re *Regex) ShortestMatch(text string) (end int, ok bool) {
 func (re *Regex) ShortestMatchBytes(text []byte) (end int, ok bool) {
 	var cend C.size_t
 	ok = bool(C.rure_shortest_match(
-		re.p, (*C.uint8_t)(&text[0]), C.size_t(len(text)), 0, &cend))
+		re.p, asUint8Ptr(text), C.size_t(len(text)), 0, &cend))
 	end = int(cend)
 	return
 }
@@ -240,7 +250,7 @@ func (re *Regex) Find(text string) (start, end int, ok bool) {
 func (re *Regex) FindBytes(text []byte) (start, end int, ok bool) {
 	match := C.rure_match{}
 	ok = bool(C.rure_find(
-		re.p, (*C.uint8_t)(&text[0]), C.size_t(len(text)), 0, &match))
+		re.p, asUint8Ptr(text), C.size_t(len(text)), 0, &match))
 	if ok {
 		start, end = int(match.start), int(match.end)
 	}
@@ -271,7 +281,7 @@ func (re *Regex) FindAllBytes(text []byte) []int {
 	it := C.rure_iter_new(re.p)
 	defer C.rure_iter_free(it)
 
-	haystack := (*C.uint8_t)(&text[0])
+	haystack := asUint8Ptr(text)
 	len := C.size_t(len(text))
 	nmatches := C.size_t(0)
 	matches := (*C.size_t)(nil)
@@ -340,7 +350,7 @@ func (re *Regex) Captures(caps *Captures, text string) bool {
 // caps must not be nil.
 func (re *Regex) CapturesBytes(caps *Captures, text []byte) bool {
 	caps.ok = bool(C.rure_find_captures(
-		re.p, (*C.uint8_t)(&text[0]), C.size_t(len(text)), 0, caps.p))
+		re.p, asUint8Ptr(text), C.size_t(len(text)), 0, caps.p))
 	return caps.ok
 }
 
@@ -462,7 +472,7 @@ func newIter(re *Regex, haystack []byte) *Iter {
 // nil, then the start and end offsets of each matching capturing group are
 // stored in caps.
 func (it *Iter) Next(caps *Captures) bool {
-	haystack := (*C.uint8_t)(&it.haystack[0])
+	haystack := asUint8Ptr(it.haystack)
 	len := C.size_t(len(it.haystack))
 
 	if caps == nil {
@@ -506,4 +516,12 @@ func noCopyBytes(s string) []byte {
 		Cap:  sh.Len,
 	}
 	return *(*[]byte)(unsafe.Pointer(&bh))
+}
+
+// Converts a byte slice to a *C.uint8_t.
+//
+// This works even for empty slices.
+func asUint8Ptr(bs []byte) *C.uint8_t {
+	bh := (*reflect.SliceHeader)(unsafe.Pointer(&bs))
+	return (*C.uint8_t)(unsafe.Pointer(bh.Data))
 }
