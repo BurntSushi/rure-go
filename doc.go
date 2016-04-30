@@ -60,7 +60,7 @@ match arbitrary bytes. The flag can be disabled in a regular expression with
 Performance tips
 
 When matching text, prefer methods in this order: IsMatch, Find, Captures.
-e.g., Use Captures without inspecting a non-zero capture group will cause the
+e.g., Using Captures without inspecting a non-zero capture group will cause the
 regex engine to do wasted work.
 */
 package rure
