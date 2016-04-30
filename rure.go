@@ -74,6 +74,8 @@ const (
 )
 
 // Regex is a compiled regular expression.
+//
+// It can be used safely from multiple goroutines simultaneously.
 type Regex struct {
 	pattern string
 	p       *C.rure
