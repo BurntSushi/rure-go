@@ -146,8 +146,7 @@ func BenchmarkLineBoundarySherlockHolmes(b *testing.B) {
 }
 
 func BenchmarkWordEndingN(b *testing.B) {
-	// Rust's regex engine uses Unicode word boundaries. Force to ASCII.
-	bench(b, `(?-u:\b)\w+n(?-u:\b)`, 8366)
+	bench(b, `\b\w+n\b`, 8366)
 }
 
 func BenchmarkRepeatedClassNegation(b *testing.B) {
