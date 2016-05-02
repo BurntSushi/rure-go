@@ -1,6 +1,9 @@
 Go bindings to RUst's REgex engine
 ==================================
-This package provides cgo bindings to Rust's regex engine.
+This package provides cgo bindings to
+[Rust's regex engine](https://github.com/rust-lang-nursery/regex)
+using its
+[C API](https://github.com/rust-lang-nursery/regex/tree/master/regex-capi).
 
 Dual-licensed under MIT or the [UNLICENSE](http://unlicense.org).
 
