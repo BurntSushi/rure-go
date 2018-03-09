@@ -10,7 +10,7 @@ func TestError(t *testing.T) {
 	re, err := Compile(`(`)
 	assert.Nil(t, re)
 	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "Unclosed parenthesis")
+	assert.Contains(t, err.Error(), "unclosed group")
 }
 
 func TestIsMatch(t *testing.T) {
