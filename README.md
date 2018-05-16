@@ -28,8 +28,8 @@ do it:
 ```
 $ git clone git://github.com/rust-lang-nursery/regex
 $ cargo build --release --manifest-path ./regex/regex-capi/Cargo.toml
-$ export CGO_LDFLAGS="-L$(pwd)/regex/regex-capi/target/release"
-$ export LD_LIBRARY_PATH="$(pwd)/regex/regex-capi/target/release"
+$ export CGO_LDFLAGS="-L$(pwd)/regex/target/release"
+$ export LD_LIBRARY_PATH="$(pwd)/regex/target/release"
 $ go get -t github.com/BurntSushi/rure-go
 $ go test github.com/BurntSushi/rure-go
 ```
