@@ -1,9 +1,9 @@
 Go bindings to RUst's REgex engine
 ==================================
 This package provides cgo bindings to
-[Rust's regex engine](https://github.com/rust-lang-nursery/regex)
+[Rust's regex engine](https://github.com/rust-lang/regex)
 using its
-[C API](https://github.com/rust-lang-nursery/regex/tree/master/regex-capi).
+[C API](https://github.com/rust-lang/regex/tree/master/regex-capi).
 
 Dual-licensed under MIT or the [UNLICENSE](http://unlicense.org).
 
@@ -26,7 +26,7 @@ library and then tell the Go compiler where to find it. These commands should
 do it:
 
 ```
-$ git clone git://github.com/rust-lang-nursery/regex
+$ git clone git://github.com/rust-lang/regex
 $ cargo build --release --manifest-path ./regex/regex-capi/Cargo.toml
 $ export CGO_LDFLAGS="-L$(pwd)/regex/target/release"
 $ export LD_LIBRARY_PATH="$(pwd)/regex/target/release"
@@ -72,8 +72,7 @@ func ExampleRegex() {
 ### Motivation
 
 I wrote these bindings primarily as a test case for the
-[C API of Rust's regex
-library](https://github.com/rust-lang-nursery/regex/tree/master/regex-capi).
+[C API of Rust's regex library](https://github.com/rust-lang/regex/tree/master/regex-capi).
 In particular, I wanted to be sure that it was feasible to write low overhead
 bindings to another language. For the most part, I think that was a success.
 
