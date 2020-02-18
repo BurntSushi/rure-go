@@ -6,11 +6,10 @@ searches in linear time with respect to the search text.
 
 The syntax has very few differences from the syntax supported by
 Go's regexp package. Nevertheless, the syntax is documented here:
-http://doc.rust-lang.org/regex/regex/index.html#syntax The differences include,
-but are not limited to: word boundary (\b) assertions are Unicode aware by
-default, Unicode support can be toggled inside the expression with the u flag,
-and an x flag is supported to permit writing patterns with insignificant
-whitespace.
+https://docs.rs/regex/#syntax The differences include, but are not limited to:
+word boundary (\b) assertions are Unicode aware by default, Unicode support can
+be toggled inside the expression with the u flag, and an x flag is supported to
+permit writing patterns with insignificant whitespace.
 
 Text encoding of patterns
 

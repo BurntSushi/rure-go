@@ -14,7 +14,7 @@ Dual-licensed under MIT or the [UNLICENSE](http://unlicense.org).
 
 The primary documentation for the Rust library, including a definition of the
 syntax, can be found here:
-http://doc.rust-lang.org/regex/regex/index.html
+https://docs.rs/regex/#syntax
 
 
 ### Install
