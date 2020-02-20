@@ -3,54 +3,54 @@ package rure
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestError(t *testing.T) {
 	re, err := Compile(`(`)
-	assert.Nil(t, re)
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "unclosed group")
+	require.Nil(t, re)
+	require.NotNil(t, err)
+	require.Contains(t, err.Error(), "unclosed group")
 }
 
 func TestIsMatch(t *testing.T) {
 	re := MustCompile(`\p{So}`)
-	assert.True(t, re.IsMatch("snowman: ☃"))
+	require.True(t, re.IsMatch("snowman: ☃"))
 }
 
 func TestShortestMatch(t *testing.T) {
 	re := MustCompile(`a+`)
 	end, ok := re.ShortestMatch("aaaaa")
-	assert.True(t, ok)
-	assert.Equal(t, 1, end)
+	require.True(t, ok)
+	require.Equal(t, 1, end)
 }
 
 func TestFind(t *testing.T) {
 	re := MustCompile(`\p{So}`)
 	start, end, ok := re.Find("snowman: ☃")
-	assert.True(t, ok)
-	assert.Equal(t, 9, start)
-	assert.Equal(t, 12, end)
+	require.True(t, ok)
+	require.Equal(t, 9, start)
+	require.Equal(t, 12, end)
 }
 
 func TestCaptures(t *testing.T) {
 	re := MustCompile(`.(.*(?P<snowman>\p{So}))$`)
 	caps := re.NewCaptures()
-	assert.Equal(t, 3, caps.Len())
+	require.Equal(t, 3, caps.Len())
 
 	ok := re.Captures(caps, "snowman: ☃")
-	assert.True(t, ok)
-	assert.NotNil(t, caps)
+	require.True(t, ok)
+	require.NotNil(t, caps)
 
 	start, end, ok := caps.Group(2)
-	assert.True(t, ok)
-	assert.Equal(t, 9, start)
-	assert.Equal(t, 12, end)
+	require.True(t, ok)
+	require.Equal(t, 9, start)
+	require.Equal(t, 12, end)
 
 	start, end, ok = caps.GroupName("snowman")
-	assert.True(t, ok)
-	assert.Equal(t, 9, start)
-	assert.Equal(t, 12, end)
+	require.True(t, ok)
+	require.Equal(t, 9, start)
+	require.Equal(t, 12, end)
 }
 
 func TestIter(t *testing.T) {
@@ -58,35 +58,40 @@ func TestIter(t *testing.T) {
 	it := re.Iter("abc xyz")
 
 	ok := it.Next(nil)
-	assert.True(t, ok)
+	require.True(t, ok)
 	start, end := it.Match()
-	assert.Equal(t, 0, start)
-	assert.Equal(t, 3, end)
+	require.Equal(t, 0, start)
+	require.Equal(t, 3, end)
 
 	caps := re.NewCaptures()
 	ok = it.Next(caps)
-	assert.True(t, ok)
+	require.True(t, ok)
 	start, end = it.Match()
-	assert.Equal(t, 4, start)
-	assert.Equal(t, 7, end)
+	require.Equal(t, 4, start)
+	require.Equal(t, 7, end)
 
 	start, end, ok = caps.Group(1)
-	assert.True(t, ok)
-	assert.Equal(t, 6, start)
-	assert.Equal(t, 7, end)
+	require.True(t, ok)
+	require.Equal(t, 6, start)
+	require.Equal(t, 7, end)
 
-	assert.False(t, it.Next(nil))
+	require.False(t, it.Next(nil))
 }
 
 func TestFindAll(t *testing.T) {
 	re := MustCompile(`\w+(\w)`)
 	matches := re.FindAll("abc xyz")
-	assert.Equal(t, []int{0, 3, 4, 7}, matches)
+	require.Equal(t, []int{0, 3, 4, 7}, matches)
 }
 
 func TestAt(t *testing.T) {
 	re := MustCompile(`\bbar`)
 	haystack := "foobar"
-	assert.True(t, re.IsMatch(haystack[3:]))
-	assert.False(t, re.IsMatchAt(haystack, 3))
+	require.True(t, re.IsMatch(haystack[3:]))
+	require.False(t, re.IsMatchAt(haystack, 3))
+}
+
+func TestCaptureNames(t *testing.T) {
+	re := MustCompile(`(?P<foo>zzz)(zzz)(?:zzz)(?P<bar>zzz)`)
+	require.Equal(t, []string{"", "foo", "", "bar"}, re.CaptureNames())
 }

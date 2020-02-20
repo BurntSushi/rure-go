@@ -370,6 +370,23 @@ func (re *Regex) IterBytes(text []byte) *Iter {
 	return newIter(re, text)
 }
 
+// CaptureNames returns a slice of the names of call capturing groups in this
+// regex. The slice has the same order as the order of the appearance of each
+// capturing group. Index 0 corresponds to the entire regex match, and is
+// therefore always unnamed. Unnamed capturing groups are always represented by
+// an empty string.
+func (re *Regex) CaptureNames() []string {
+	it := C.rure_iter_capture_names_new(re.p)
+	defer C.rure_iter_capture_names_free(it)
+
+	var names []string
+	var name *C.char
+	for C.rure_iter_capture_names_next(it, &name) {
+		names = append(names, C.GoString(name))
+	}
+	return names
+}
+
 // NewOptions returns a fresh options value for configuring non-flag options
 // of a regex.
 //
