@@ -172,7 +172,7 @@ func CompileOptions(
 	re.p = C.rure_compile(
 		asUint8Ptr(noCopyBytes(pattern)),
 		C.size_t(len(pattern)),
-		FlagDefault,
+		C.uint(flags),
 		optp,
 		err.p,
 	)
